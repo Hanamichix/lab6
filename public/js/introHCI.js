@@ -1,10 +1,25 @@
 'use strict';
 
+// var palettes = require('../palettes.json');
+
+
 // Call this function when the page loads (the "ready" event)
 $(document).ready(function() {
 	initializePage();
 })
 
+$("#colorBtn").click(function(e){
+	$.get("/palette" , color);
+})
+function color(result){
+	var colors = result;
+	console.log(colors);
+	$('body').css('background-color', colors[0]);
+	$('.thumbnail').css('background-color', colors[1]);
+	$('h1, h2, h3, h4, h5, h5').css('color', colors[2]);
+	$('p').css('color', colors[3]);
+	$('.project img').css('opacity', .75);
+}
 /*
  * Function that is called when the document is ready.
  */
@@ -23,16 +38,27 @@ function addProjectDetails(e) {
 
 	// Get the div ID, e.g., "project3"
 	var projectID = $(this).closest('.project').attr('id');
+	console.log(projectID);
 	// get rid of 'project' from the front of the id 'project3'
 	var idNumber = projectID.substr('project'.length);
 
 	console.log("User clicked on project " + idNumber);
+	$.get("/project/" + idNumber, callBack);
 }
 
 /*
  * Make an AJAX call to retrieve a color palette for the site
  * and apply it
  */
+function callBack(result){
+	console.log(result);
+	var projectHTML = '<a href = "#" class = "thumbnail">' + '<img src= "' + result['image'] + '" class = "detailsImage">' + 
+	'<p>' + result['title'] + '</p>'
+	+'<p><small>' + result['date'] + '</small></p></a>';
+	var projectID = "project" + result['id'];
+	console.log(projectID);
+	$("#" + projectID + " .details").html(projectHTML);
+}
 function randomizeColors(e) {
 	console.log("User clicked on color button");
 }
